@@ -1,7 +1,26 @@
 AppSolo-php
 ===========
 
-A Tiny Single Page PHP Framework with Template Support
+A Tiny Single Page PHP Framework with Template Support.
+
+In many cases, we need develope small web applications, for which a single page php file is enough.
+
+Although it's lite, we still want some features from other best pratices:
+
+  * A **Router** to map requset to function
+  * A **View** can be separated from model/controller logic
+  * A **Template** to start with
+
+"AppSolo-php" is wrote for this purpose. It include features like:
+
+  * A **Router** to map request
+  * A **Tempalte** implementaion with pure PHP, allow `extend` and `block`
+  * A **Demo** to start with
+  * Allow generate output inline
+  * Allow use from command line (`cli` mode)
+  * Use `PATH_INFO` for nice looking URL
+
+
 
 Quick Demo
 -----------
