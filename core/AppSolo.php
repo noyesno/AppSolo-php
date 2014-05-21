@@ -49,10 +49,10 @@ class AppSolo {
 
 
 class AppView {
-  static $vars   = array();
-  static $view   = null;
-  static $buffer = array();
-  static $extend = array();
+  static $vars     = array();
+  static $view     = null;
+  static $buffer   = array();
+  static $extended = 0;
 
   static function assign($key, $value){
     self::$vars[$key] = $value;
@@ -65,6 +65,7 @@ class AppView {
   static function extend($view){
     foreach(self::$buffer as $k=>$v) unset(self::$buffer[$k]);
     self::load($view);
+    self::$extended = 1;
   }
 
   static function block($name=null){
@@ -79,7 +80,9 @@ class AppView {
        ob_start();
      }else{
        $data = ob_get_clean();
-       self::$buffer[] = $data;
+       if(!self::$extended){
+         self::$buffer[] = $data;
+       }
 
        if(!isset(self::$buffer[$name])){
          self::$buffer[$name] = null;
@@ -91,6 +94,8 @@ class AppView {
   static function display(){
     $view = self::$view;
     foreach(self::$buffer as $k=>$v) unset(self::$buffer[$k]);
+    self::$extended = 0;
+
     self::load($view);
     echo implode('',self::$buffer);
   }
