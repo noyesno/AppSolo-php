@@ -76,6 +76,7 @@ class AppView {
        $data = ob_get_clean();
        #TODO: check name
        self::$buffer[substr($name,1)] = $data;
+       ob_start();
      }else{
        $data = ob_get_clean();
        self::$buffer[] = $data;
@@ -89,6 +90,7 @@ class AppView {
 
   static function display(){
     $view = self::$view;
+    foreach(self::$buffer as $k=>$v) unset(self::$buffer[$k]);
     self::load($view);
     echo implode('',self::$buffer);
   }
