@@ -115,3 +115,16 @@ class AppView {
     }
   }
 }
+
+
+class AppRegistry {
+  static $lut = array();
+
+  static function set($key, $value){
+    self::$lut[$key] = $value;
+  }
+
+  static function get($key, $value=null){
+    return isset(self::$lut[$key])?self::$lut[$key]:$value;
+  }
+}
