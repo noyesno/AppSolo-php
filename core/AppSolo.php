@@ -29,14 +29,19 @@ class AppSolo {
     $this->argv = array_merge(array('.php'), strlen($path_info)?explode('/',$path_info):array());
   }
 
+  private function match_method($method){
+    $request_method = $_SERVER['REQUEST_METHOD'];
+    return $method==="*" || $request_method===$method;
+  }
+
   function dispatch($schema=array()){
     $this->schema = $schema; 
-    $request_path = '/'.$this->path;
+    $request_path   = '/'.$this->path;
 
     // prelude
     foreach($this->schema['prelude'] as $route){
       list($method, $pattern, $func) = $route;
-      if(preg_match("#$pattern#", $request_path, $matches)){
+      if($this->match_method($method) && preg_match("#$pattern#", $request_path, $matches)){
         $user_argv = array();
         foreach($matches as $k=>$v){ if(is_int($k) && $k>0) $user_argv[] = $v; }
         $this->args = $matches; // TODO
@@ -47,7 +52,7 @@ class AppSolo {
 
     foreach($this->schema['route'] as $route){
       list($method, $pattern, $func) = $route;
-      if(preg_match("#$pattern#", $request_path, $matches)){
+      if($this->match_method($method) && preg_match("#$pattern#", $request_path, $matches)){
         $user_argv = array();
         foreach($matches as $k=>$v){ if(is_int($k) && $k>0) $user_argv[] = $v; }
         $this->args = $matches; // TODO
@@ -61,7 +66,7 @@ class AppSolo {
     // postlude
     foreach($this->schema['postlude'] as $route){
       list($method, $pattern, $func) = $route;
-      if(preg_match("#$pattern#", $request_path, $matches)){
+      if($this->match_method($method) && preg_match("#$pattern#", $request_path, $matches)){
         $user_argv = array();
         foreach($matches as $k=>$v){ if(is_int($k) && $k>0) $user_argv[] = $v; }
         $this->args = $matches; // TODO
