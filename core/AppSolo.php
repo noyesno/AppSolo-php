@@ -32,16 +32,44 @@ class AppSolo {
   function dispatch($schema=array()){
     $this->schema = $schema; 
     $request_path = '/'.$this->path;
+
+    // prelude
+    foreach($this->schema['prelude'] as $route){
+      list($method, $pattern, $func) = $route;
+      if(preg_match("#$pattern#", $request_path, $matches)){
+        $user_argv = array();
+        foreach($matches as $k=>$v){ if(is_int($k) && $k>0) $user_argv[] = $v; }
+        $this->args = $matches; // TODO
+        $user_func = trim($func, '|');
+        call_user_func_array($user_func, $user_argv);
+      }
+    }
+
     foreach($this->schema['route'] as $route){
       list($method, $pattern, $func) = $route;
       if(preg_match("#$pattern#", $request_path, $matches)){
         $user_argv = array();
         foreach($matches as $k=>$v){ if(is_int($k) && $k>0) $user_argv[] = $v; }
         $this->args = $matches; // TODO
-        call_user_func_array($func, $user_argv);
+        $user_func = trim($func, '|');
+        call_user_func_array($user_func, $user_argv);
+        if($func[0]=='|') continue; // filter
         break;
       }
     }
+
+    // postlude
+    foreach($this->schema['postlude'] as $route){
+      list($method, $pattern, $func) = $route;
+      if(preg_match("#$pattern#", $request_path, $matches)){
+        $user_argv = array();
+        foreach($matches as $k=>$v){ if(is_int($k) && $k>0) $user_argv[] = $v; }
+        $this->args = $matches; // TODO
+        $user_func = trim($func, '|');
+        call_user_func_array($user_func, $user_argv);
+      }
+    }
+    // display
     AppView::display();
   }
 }
