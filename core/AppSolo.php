@@ -92,12 +92,14 @@ class AppView {
   }
 
   static function display(){
-    $view = self::$view;
+    if(is_null(self::$view)) return;
+
     foreach(self::$buffer as $k=>$v) unset(self::$buffer[$k]);
     self::$extended = 0;
 
-    self::load($view);
+    self::load(self::$view);
     echo implode('',self::$buffer);
+    // flush()
   }
 
   static function load($view){
