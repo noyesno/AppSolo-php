@@ -41,6 +41,7 @@ class AppSolo {
     // prelude
     foreach($this->schema['prelude'] as $route){
       list($method, $pattern, $func) = $route;
+      $pattern = preg_replace(array('/::/', '/:\w+/'), array('[^/]+', '([^/]+)'), $pattern);
       if($this->match_method($method) && preg_match("#$pattern#", $request_path, $matches)){
         $user_argv = array();
         foreach($matches as $k=>$v){ if(is_int($k) && $k>0) $user_argv[] = $v; }
@@ -52,6 +53,7 @@ class AppSolo {
 
     foreach($this->schema['route'] as $route){
       list($method, $pattern, $func) = $route;
+      $pattern = preg_replace(array('/::/', '/:\w+/'), array('[^/]+', '([^/]+)'), $pattern);
       if($this->match_method($method) && preg_match("#$pattern#", $request_path, $matches)){
         $user_argv = array();
         foreach($matches as $k=>$v){ if(is_int($k) && $k>0) $user_argv[] = $v; }
@@ -66,6 +68,7 @@ class AppSolo {
     // postlude
     foreach($this->schema['postlude'] as $route){
       list($method, $pattern, $func) = $route;
+      $pattern = preg_replace(array('/::/', '/:\w+/'), array('[^/]+', '([^/]+)'), $pattern);
       if($this->match_method($method) && preg_match("#$pattern#", $request_path, $matches)){
         $user_argv = array();
         foreach($matches as $k=>$v){ if(is_int($k) && $k>0) $user_argv[] = $v; }
