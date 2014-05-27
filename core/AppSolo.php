@@ -34,10 +34,7 @@ class AppSolo {
     return $method==="*" || $request_method===$method;
   }
 
-  function dispatch($schema=array()){
-    $this->schema = $schema; 
-    $request_path   = '/'.$this->path;
-
+  function prelude(){
     // prelude
     foreach($this->schema['prelude'] as $route){
       list($method, $pattern, $func) = $route;
@@ -50,21 +47,9 @@ class AppSolo {
         call_user_func_array($user_func, $user_argv);
       }
     }
+  }
 
-    foreach($this->schema['route'] as $route){
-      list($method, $pattern, $func) = $route;
-      $pattern = preg_replace(array('/::/', '/:\w+/'), array('[^/]+', '([^/]+)'), $pattern);
-      if($this->match_method($method) && preg_match("#$pattern#", $request_path, $matches)){
-        $user_argv = array();
-        foreach($matches as $k=>$v){ if(is_int($k) && $k>0) $user_argv[] = $v; }
-        $this->args = $matches; // TODO
-        $user_func = trim($func, '|');
-        call_user_func_array($user_func, $user_argv);
-        if($func[0]=='|') continue; // filter
-        break;
-      }
-    }
-
+  function postlude($request_path){
     // postlude
     foreach($this->schema['postlude'] as $route){
       list($method, $pattern, $func) = $route;
@@ -77,6 +62,38 @@ class AppSolo {
         call_user_func_array($user_func, $user_argv);
       }
     }
+  }
+
+  function route($request_path){
+    foreach($this->schema['route'] as $route){
+      list($method, $pattern, $func) = $route;
+      $pattern = preg_replace(array('/::/', '/:\w+/'), array('[^/]+', '([^/]+)'), $pattern);
+      if($this->match_method($method) && preg_match("#$pattern#", $request_path, $matches)){
+        $user_argv = array();
+        foreach($matches as $k=>$v){ if(is_int($k) && $k>0) $user_argv[] = $v; }
+        $this->args = $matches; // TODO
+        $user_func = trim($func, '|');
+        $ret = call_user_func_array($user_func, $user_argv);
+        /*
+         * If the return is omitted the value NULL will be returned.
+         * If no parameter is supplied, NULL will be returned.
+         */
+        if($ret===true || $func[0]=='|') continue; // filter
+        break;
+      }
+    }
+  }
+
+  function dispatch($schema=array()){
+    $this->schema = $schema;
+    $request_path   = '/'.$this->path;
+
+    $this->prelude($request_path);
+
+    $this->route($request_path);
+
+    $this->postlude($request_path);
+
     // display
     AppView::display();
   }
