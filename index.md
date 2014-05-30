@@ -1,6 +1,7 @@
 ---
 layout: project
 title: AppSolo-php 
+github: noyesno/AppSolo-php 
 ---
 AppSolo-php
 ===========
