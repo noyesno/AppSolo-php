@@ -1,5 +1,5 @@
 ---
-layout: project
+layout: github 
 title: AppSolo-php 
 github: noyesno/AppSolo-php 
 ---
