@@ -5,16 +5,27 @@ class AppSolo {
   var $argv   = array();
   var $args   = array();
 
-  static $config = array();
+  static $config   = array();
+  static $registry = array();
 
   static function config($key, $value=null){
     if(func_num_args()==1) return self::$config[$key];
     self::$config[$key] = $value;
   }
 
+  static function register($key, $value=null){
+    if(func_num_args()==1) return self::$registry[$key];
+    self::$registry[$key] = $value;
+  }
+
   static function make($configs){
     foreach($configs as $key=>$value) self::$config[$key] = $value;
     return new AppSolo();
+  }
+
+  static function redirect($path){
+    $site_base = AppRegistry::get('site.base');
+    header("Location: $site_base/$path");
   }
 
   function __construct(){
@@ -23,6 +34,8 @@ class AppSolo {
       $path_info = $argv[1];
     }else{
       $path_info = trim($_SERVER['PATH_INFO'],'/');
+      AppRegistry::set('site.root', rtrim(dirname($_SERVER['SCRIPT_NAME']),'/')); 
+      AppRegistry::set('site.base', $_SERVER['SCRIPT_NAME']); 
     }
 
     $this->path = $path_info;
