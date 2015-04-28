@@ -120,6 +120,15 @@ class AppView {
   static $buffer   = array();
   static $extended = 0;
 
+  function register($key, $value=null){
+    static $askfor = array();
+
+    if(!is_null($value)){
+      $askfor[$key] = 1;
+    }
+    return isset($askfor[$key])?$askfor[$key]:null;
+  }
+
   static function assign($key, $value){
     self::$vars[$key] = $value;
   }
